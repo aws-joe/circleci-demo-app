@@ -14,7 +14,7 @@ if (!defined('PSI_CONFIG_FILE')) {
     if (!is_readable(PSI_CONFIG_FILE) || !($config = @parse_ini_file(PSI_CONFIG_FILE, true))) {
         if (defined('PSI_INTERNAL_XML') && PSI_INTERNAL_XML === true) {
             echo "ERROR: phpsysinfo.ini does not exist or is not readable by the webserver in the phpsysinfo directory";
-            die();
+            exit(1);
         }
     } else {
         foreach ($config as $name=>$group) {
