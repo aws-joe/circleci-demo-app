@@ -1,0 +1,5 @@
+version: 0.0
+os: linux
+files:
+- source: circleci-demo-app/
+destination: /var/www/html/
