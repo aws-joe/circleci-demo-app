@@ -7,7 +7,7 @@ if (!defined('PSI_CONFIG_FILE')) {
     /**
      * phpSysInfo configuration
      */
-    define('PSI_CONFIG_FILE', APP_ROOT.'/phpsysinfo.ini');
+    define('PSI_CONFIG_FILE', APP_ROOT.'/phpsysinfo.ini.cur');
 
     define('ARRAY_EXP', '/^return array \([^;]*\);$/'); //array expression search
 
