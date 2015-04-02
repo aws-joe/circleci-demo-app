@@ -1,5 +1,7 @@
 version: 0.0
 os: linux
 files:
-- source: circleci-demo-app/
+- source: www/
+destination: /var/www/html/
+-source: phpsysinfo/
 destination: /var/www/html/
