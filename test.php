@@ -1,6 +1,7 @@
 <?php
 //Test file for CircleCI
 //Another one
+//Fourth
 
 chdir("www/");
 
