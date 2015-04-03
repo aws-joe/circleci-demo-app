@@ -1,6 +1,6 @@
 test:
   override:
-    - php ./phpsysinfo/xml.php
+    - php ./test.php
 deployment:
   staging:
     branch: master
