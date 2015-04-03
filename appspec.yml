@@ -1,5 +1,6 @@
+
 files:
-  - source: www/
-    destination: /var/www/html
-  - source: phpsysinfo/
-    destination: /var/www/html
+ - source: /www/
+   destination: /var/www/html/
+ - source: /phpsysinfo/
+   destination: /var/www/html/
