@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-- source: www/
+- source: /www
 destination: /var/www/html/
--source: phpsysinfo/
+-source: /phpsysinfo
 destination: /var/www/html/
