@@ -1,5 +1,7 @@
 <?php
 
-header("Location: www/");
+$outBound = $_SERVER['SERVER_NAME']."/www/";
+
+header("Location: $outBound");
 
 ?>
