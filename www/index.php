@@ -1,4 +1,7 @@
 <?php
+
+$AppName = "Demo App";
+
 ob_start();
 
 include "../phpsysinfo/xml.php";
@@ -67,7 +70,7 @@ else
 				</nav>
 				<h1 class="templatemo-site-name">
                 	<span class="templatemo-brown">AWS</span> 
-                	<span class="templatemo-gold">CircleCI</span>
+                	<span class="templatemo-gold"><?php print $AppName; ?></span>
                 </h1>
 				<div class="text-right visible-xs">
 		            <a href="#" id="mobile_menu"><span class="fa fa-bars"></span></a>
@@ -136,7 +139,7 @@ else
 							<span class="templatemo-section-title">Current Network</span>
 							<span class="templatemo-section-title">Use <span class="templatemo-gold"><strong>DATA</strong></span></span>
 						</h2>
-						<p class="margin-top-30">Current system memory utilization.</p>
+						<p class="margin-top-30">Current Error, Drop, Tx, and Rx data values.</p>
 					</div>					
 				</div>
 				<div class="col-lg-6 col-md-6">
@@ -174,6 +177,13 @@ else
 	<script src="js/templatemo_script.js"></script>
         <script>
             // line chart data
+<?php
+$cpuTon = explode(" ",$buffA['Vitals']['@attributes']['LoadAvg']);
+
+$cpuOne = $cpuTon[0];
+$cpuTwo = $cpuTon[1];
+$cpuThr = $cpuTon[2];
+?>
             var cpuData = {
                 labels : ["One Min","Five Min","Fifteen Min"],
                 datasets : [
@@ -182,7 +192,7 @@ else
                     strokeColor : "#ACC26D",
                     pointColor : "#fff",
                     pointStrokeColor : "#9DB86D",
-                    data : [0.08,0.03,0.05]
+                    data : [<?php print $cpuOne; ?>,<?php print $cpuTwo; ?>,<?php print $cpuThr; ?>]
                 }
             ]
             }
@@ -190,6 +200,16 @@ else
 		new Chart(cpu).Line(cpuData);
 </script>
 <script>
+<?php
+$diskPerc = $buffA['FileSystem']['Mount'][0]['@attributes']['Percent'];
+$memPerc = $buffA['Memory']['@attributes']['Percent'];
+$cacPerc = $buffA['Memory']['Details']['@attributes']['CachedPercent'];
+$cpuPercA = explode(" ",$buffA['Vitals']['@attributes']['LoadAvg']);
+$cpuPerc = ($cpuPercA[0] * 100);
+$netTXCalc = ($buffA['Network']['NetDevice'][0]['@attributes']['TxBytes'] / 100000);
+$netRXCalc = ($buffA['Network']['NetDevice'][0]['@attributes']['RxBytes'] / 100000);
+$netPerc = floor($netRXCalc / $netTXCalc);
+?>
 var oData = {
     labels: ["CPU", "Disk", "RAM", "Network", "Cache"],
     datasets: [
@@ -201,7 +221,7 @@ var oData = {
             pointStrokeColor: "#fff",
             pointHighlightFill: "#fff",
             pointHighlightStroke: "rgba(151,187,205,1)",
-            data: [5, 48, 40, 10, 15]
+            data: [<?php print $cpuPerc; ?>, <?php print $diskPerc; ?>, <?php print $memPerc; ?>, <?php print $netPerc; ?>, <?php print $cacPerc; ?>]
         }
     ]
 };
@@ -210,15 +230,21 @@ var oData = {
             var overview = document.getElementById('overview').getContext('2d');
 		new Chart(overview).Radar(oData);
 </script>
+<?php
+$memUse = ( $buffA['Memory']['@attributes']['Used'] / 1000000 );
+$memFre = ( $buffA['Memory']['@attributes']['Free'] / 1000000 );
+?>
 <script>
             var dohData = [
                 {
-                    value: 62,
-                    color:"#878BB6"
+                    value: <?php print $memFre; ?>,
+                    color:"#878BB6",
+		    label: "Free RAM"
                 },
                 {
-                    value : 98,
-                    color : "#4ACAB4"
+                    value : <?php print $memUse; ?>,
+                    color : "#4ACAB4",
+		    label: "Used RAM"
                 }
             ];
             // pie chart options
@@ -232,31 +258,37 @@ var oData = {
             new Chart(memory).Pie(dohData, dohOptions);
 </script>
 <script>
+<?php
+$netTX = ($buffA['Network']['NetDevice'][0]['@attributes']['TxBytes'] / 100000);
+$netRX = ($buffA['Network']['NetDevice'][0]['@attributes']['RxBytes'] / 100000);
+$netEr = $buffA['Network']['NetDevice'][0]['@attributes']['Err'];
+$netDr = $buffA['Network']['NetDevice'][0]['@attributes']['Drops']
+?>
 var netOptions = {
 	animateRotate : true,
 	scaleShowLabelBackdrop : true
 	}
 var netData = [
     {
-        value: 26,
+        value: <?php print $netRX; ?>,
         color:"#F7464A",
         highlight: "#FF5A5E",
         label: "RxBytes"
     },
     {
-        value: 75,
+        value: <?php print $netTX; ?>,
         color: "#46BFBD",
         highlight: "#5AD3D1",
         label: "TxBytes"
     },
     {
-        value: 1,
+        value: <?php print $netEr; ?>,
         color: "#FDB45C",
         highlight: "#FFC870",
         label: "Errors"
     },
     {
-        value: 4,
+        value: <?php print $netDr; ?>,
         color: "#949FB1",
         highlight: "#A8B3C5",
         label: "Drops"
@@ -269,6 +301,10 @@ var netData = [
             new Chart(network).PolarArea(netData, netOptions);
 </script>
 <script>
+<?php
+$diskUse = $buffA['FileSystem']['Mount'][0]['@attributes']['Used'];
+$diskFre = $buffA['FileSystem']['Mount'][0]['@attributes']['Free'];
+?>
 var diskData = {
     labels: ["Disk Free", "Disk Used" ],
     datasets: [
@@ -278,7 +314,7 @@ var diskData = {
             strokeColor: "rgba(220,220,220,0.8)",
             highlightFill: "rgba(220,220,220,0.75)",
             highlightStroke: "rgba(220,220,220,1)",
-            data: [6390845440, 3939082240 ]
+            data: [<?php print $diskFre; ?>, <?php print $diskUse; ?> ]
         }
     ]
 };
