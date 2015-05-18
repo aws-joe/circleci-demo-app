@@ -4,24 +4,7 @@ $AppName = "Updated Demo App";
 
 ob_start();
 
-include "../phpsysinfo/xml.php";
-
-$buff = ob_get_clean();
-
-if(strlen($buff) < 200)
-	{
-	print "Error in system information gathering<br>\n";
-	exit(1);
-	}
-else
-	{
-	$buffA = json_decode($buff,true);
-	if(json_last_error() != JSON_ERROR_NONE)
-		{
-		print "Error in JSON Response<br>\n";
-		exit(1);
-		}
-	}
+include "lib.php";
 
 ?>
 <!DOCTYPE html>
@@ -178,8 +161,8 @@ else
         <script>
             // line chart data
 <?php
-$cpuTon = explode(" ",$buffA['Vitals']['@attributes']['LoadAvg']);
 
+$cpuTon = get_cpu();
 $cpuOne = $cpuTon[0];
 $cpuTwo = $cpuTon[1];
 $cpuThr = $cpuTon[2];
@@ -201,14 +184,14 @@ $cpuThr = $cpuTon[2];
 </script>
 <script>
 <?php
-$diskPerc = $buffA['FileSystem']['Mount'][0]['@attributes']['Percent'];
-$memPerc = $buffA['Memory']['@attributes']['Percent'];
-$cacPerc = $buffA['Memory']['Details']['@attributes']['CachedPercent'];
-$cpuPercA = explode(" ",$buffA['Vitals']['@attributes']['LoadAvg']);
-$cpuPerc = ($cpuPercA[0] * 100);
-$netTXCalc = ($buffA['Network']['NetDevice'][0]['@attributes']['TxBytes'] / 100000);
-$netRXCalc = ($buffA['Network']['NetDevice'][0]['@attributes']['RxBytes'] / 100000);
-$netPerc = floor($netRXCalc / $netTXCalc);
+
+$info_out = get_perc();
+
+$diskPerc = floor((($info_out['disk_info']['used']/1000)/($info_out['disk_info']['total']/1000))*100);
+$memPerc = floor(($info_out['mem_info']['free']/$info_out['mem_info']['total'])*100);
+$cacPerc = floor(($info_out['mem_info']['cach']/$info_out['mem_info']['total'])*100);
+$cpuPerc = ($info_out['cpu_info'][2] * 100);
+$netPerc = floor(($info_out['net_info']['rx'] / $info_out['net_info']['tx'])*100);
 ?>
 var oData = {
     labels: ["CPU", "Disk", "RAM", "Network", "Cache"],
@@ -231,8 +214,9 @@ var oData = {
 		new Chart(overview).Radar(oData);
 </script>
 <?php
-$memUse = ( $buffA['Memory']['@attributes']['Used'] / 1000000 );
-$memFre = ( $buffA['Memory']['@attributes']['Free'] / 1000000 );
+$memArr = get_mem();
+$memUse = $memArr['total'] - $memArr['free'];
+$memFre = $memArr['free'];
 ?>
 <script>
             var dohData = [
@@ -259,10 +243,13 @@ $memFre = ( $buffA['Memory']['@attributes']['Free'] / 1000000 );
 </script>
 <script>
 <?php
-$netTX = ($buffA['Network']['NetDevice'][0]['@attributes']['TxBytes'] / 100000);
-$netRX = ($buffA['Network']['NetDevice'][0]['@attributes']['RxBytes'] / 100000);
-$netEr = $buffA['Network']['NetDevice'][0]['@attributes']['Err'];
-$netDr = $buffA['Network']['NetDevice'][0]['@attributes']['Drops']
+$net_info = get_network();
+
+$netTX = $net_info['tx'];
+$netRX = $net_info['rx'];
+$netEr = $net_info['ex'];
+$netDr = $net_info['dx'];
+
 ?>
 var netOptions = {
 	animateRotate : true,
@@ -302,8 +289,12 @@ var netData = [
 </script>
 <script>
 <?php
-$diskUse = $buffA['FileSystem']['Mount'][0]['@attributes']['Used'];
-$diskFre = $buffA['FileSystem']['Mount'][0]['@attributes']['Free'];
+
+$disk_info = get_disk();
+
+$diskUse = $disk_info['used'];
+$diskFre = $disk_info['free'];
+
 ?>
 var diskData = {
     labels: ["Disk Free", "Disk Used" ],
