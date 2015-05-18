@@ -9,7 +9,7 @@ include "./index.php";
 
 $buff = ob_get_clean();
 
-if(strlen($buff) < 8000)
+if(strlen($buff) < 9000)
         {
         print "Error in system information gathering<br>\n";
         exit(1);

@@ -3,7 +3,5 @@ os: linux
 files:
  - source: /www
    destination: /var/www/html/www
- - source: /phpsysinfo
-   destination: /var/www/html/phpsysinfo
  - source: /index.php
    destination: /var/www/html/index.php
