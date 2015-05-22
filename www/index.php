@@ -150,7 +150,7 @@ include "lib.php";
 		<div class="row">
 			<div class="col-lg-12">
 				<p class="templatemo-copyright-container text-uppercase small templatemo-brown">
-					<span class="templatemo-copyright-text">Copyright &copy; 2015 <a href="#" class="templatemo-gold">AWS</a></span>
+					<span class="templatemo-copyright-text">Copyright &copy; 2015 <a href="#" class="templatemo-gold">CircleCI</a></span>
 					<!-- <span class="templatemo-copyright-design">Design: <a href="http://www.templatemo.com" class="templatemo-gold">templatemo</a></span> -->
 				</p>
 			</div>
